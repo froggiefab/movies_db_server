@@ -6,7 +6,8 @@ pub mod server_configuration {
 
     #[derive(serde_derive::Deserialize, Debug)]
     pub struct Configuration {
-        pub database_url: String
+        pub database_url: String,
+        pub temp_folder: String
     }
 
     pub fn init() -> Configuration {
