@@ -6,11 +6,14 @@ pub mod server_configuration {
 
     #[derive(serde_derive::Deserialize, Debug)]
     pub struct Configuration {
-        pub name: String
+        pub database_url: String
     }
 
-    pub fn init() -> String {
-        dotenv::dotenv().ok();
-        String::from("OK !")
+    pub fn init() -> Configuration {
+        dotenv::dotenv().expect("Failed to read .env file");
+        match envy::from_env::<Configuration>() {
+            Ok(config) => config,
+            Err(e) => panic!(e)
+        }
     }
 }
