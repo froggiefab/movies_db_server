@@ -5,3 +5,7 @@ authors = ["Froggie <froggiefab@msn.com>"]
 edition = "2018"
 
 [dependencies]
+dotenv = "0.13.0"
+envy = "0.3.3"
+serde = "1.0.82"
+serde_derive = "1.0.82"
