@@ -1,7 +1,13 @@
+use crate::server_configuration::Configuration;
+
+use self::schema::movies;
+use self::schema::movies::dsl::*;
 
 use diesel::prelude::*;
+use diesel::result::Error;
+use diesel::{Queryable, Insertable};
 use diesel::pg::PgConnection;
-use crate::server_configuration::Configuration;
+use std::result::Result;
 
 mod schema;
 
@@ -19,6 +25,15 @@ pub struct Movie {
     pub rating: Option<i32>
 }
 
+#[derive(Insertable)]
+#[table_name="movies"]
+pub struct NewMovie<'a> {
+    pub title: &'a String,
+    pub synopsis: &'a String,
+    pub poster: Option<&'a String>,
+    pub rating: i32
+}
+
 pub struct MovieService<'a> {
     configuration: &'a Configuration
 }
@@ -31,9 +46,20 @@ impl<'a> MovieService<'a> {
         }
     }
     
-    pub fn getMovies(&self) -> Vec<Movie> {  
+    pub fn get_movies(&self) -> Vec<Movie> {  
         let connection = establish_connection(self.configuration);
-        schema::movies::table.limit(5).load::<Movie>(&connection).expect("Error loading movies")
+        movies.limit(5).load::<Movie>(&connection).expect("Error loading movies")
+    }
+
+    pub fn create_movie(&self, movie: &Movie) -> Result<Movie, Error> {
+        let connection = establish_connection(self.configuration);
+        let new_movie = NewMovie {
+            title: &movie.title,
+            synopsis : &movie.synopsis,
+            poster: movie.poster.as_ref(),
+            rating: movie.rating.unwrap_or(1)
+        };
+        diesel::insert_into(movies::table).values(&new_movie).get_result(&connection)
     }
 
 }
