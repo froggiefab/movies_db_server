@@ -10,7 +10,7 @@ fn main() {
 
     let movie1 = orm::Movie {
         id: 1,
-        title: String::from("Toxi avengers"),
+        title: String::from("Toxic avengers"),
         synopsis: String::from("Meh"),
         poster: None,
         rating: None
